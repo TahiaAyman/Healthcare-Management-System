@@ -11,3 +11,6 @@ server/node_modules
 server/.env
 
 .DS_Store
+
+client/AGENTS.md
+client/CLAUDE.md
