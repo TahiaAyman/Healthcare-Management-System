@@ -39,10 +39,35 @@ app.use(express.json());
 // =====================
 // DATABASE CONNECT
 // =====================
-mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => console.log("MongoDB Connected"))
-  .catch((err) => console.log("Mongo Error:", err));
+let isConnected = false;
+
+const connectDB = async () => {
+  if (isConnected) {
+    return;
+  }
+
+  try {
+    await mongoose.connect(process.env.MONGO_URI);
+    isConnected = true;
+    console.log("MongoDB Connected");
+  } catch (err) {
+    console.log("Mongo Error:", err);
+    throw err;
+  }
+};
+
+// Connect database before every API request
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (error) {
+    res.status(500).json({
+      message: "Database connection failed",
+      error: error.message,
+    });
+  }
+});
 
 // =====================
 // ROUTES
