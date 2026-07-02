@@ -12,9 +12,24 @@ const app = express();
 // =====================
 // MIDDLEWARE
 // =====================
+
+// Allowed frontend URLs
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://healthcare-management-system-topaz.vercel.app",
+  "https://healthcare-management-system-hphzvzlv9-tahiaaymans-projects.vercel.app",
+  process.env.CLIENT_URL,
+].filter(Boolean);
+
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || "http://localhost:3000",
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   })
 );
